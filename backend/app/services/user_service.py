@@ -29,5 +29,5 @@ def get_users(db: Session):
     return db.query(User).all()
 
 
-def get_user_by_uid(db: Session, uid: str):
-    return db.query(User).filter(User.id == uid).first()
+def get_user_by_id(db: Session, id: str):
+    return db.query(User).filter(User.id == id).first()

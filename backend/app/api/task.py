@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.task import Task
 from app.schemas.task import TaskCreate, TaskOut
-import uuid
 
 router = APIRouter()
 
