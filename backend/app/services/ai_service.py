@@ -25,3 +25,15 @@ def generate_tasks_from_goal(goal: str, retries=2):
             continue
 
     raise Exception("AI failed to generate valid tasks")
+
+
+def generate_tasks_from_file(file_text: str, retries=2):
+    for _ in range(retries):
+        try:
+            result = chain.invoke({"goal": file_text})
+            if result and result.tasks:
+                return result.tasks
+        except Exception:
+            continue
+
+    raise Exception("AI failed to generate tasks from file")
