@@ -3,6 +3,7 @@ from typing import List
 
 class AITask(BaseModel):
     title: str
+    description: str
     priority: str
     estimated_minutes: int
 

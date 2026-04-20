@@ -21,9 +21,9 @@ def generate_tasks(req: TaskGenerationRequest, db: Session = Depends(get_db)):
     for t in tasks:
         task_data = TaskCreate(
             title=t.title,
-            description=None,
+            description=t.description,
             owner_id="613e3e37-816d-48ab-9c11-7db7833a1c09",
-            status="TODO",
+            status=t.status if hasattr(t, "status") else "TODO",
             priority=t.priority,
             estimated_minutes=t.estimated_minutes,
         )

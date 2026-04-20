@@ -6,7 +6,7 @@ from app.prompts.task_prompt import task_prompt
 
 llm = ChatGroq(
     model=settings.GROQ_MODEL,
-    temperature=0,
+    temperature=0.2, #randomness vs determinism
     groq_api_key=settings.GROQ_API_KEY,
 )
 
@@ -15,6 +15,13 @@ prompt = task_prompt
 
 chain = prompt | structured_llm
 
-def generate_tasks_from_goal(goal: str):
-    result = chain.invoke({"goal": goal})
-    return result.tasks
+def generate_tasks_from_goal(goal: str, retries=2):
+    for _ in range(retries):
+        try:
+            result = chain.invoke({"goal": goal})
+            if result.tasks:
+                return result.tasks
+        except Exception:
+            continue
+
+    raise Exception("AI failed to generate valid tasks")
