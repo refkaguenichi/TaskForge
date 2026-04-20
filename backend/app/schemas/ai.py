@@ -1,5 +1,3 @@
-# app/schemas/ai.py
-
 from pydantic import BaseModel
 from typing import List
 
@@ -8,5 +6,5 @@ class AITask(BaseModel):
     priority: str
     estimated_minutes: int
 
-class AITaskResponse(BaseModel):
+class AITaskList(BaseModel):
     tasks: List[AITask]

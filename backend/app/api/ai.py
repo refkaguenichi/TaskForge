@@ -14,18 +14,18 @@ router = APIRouter()
 
 @router.post("/generate-tasks")
 def generate_tasks(req: TaskGenerationRequest, db: Session = Depends(get_db)):
-    result = generate_tasks_from_goal(req.goal)
-    tasks = result["tasks"]
+    tasks = generate_tasks_from_goal(req.goal)
+
     saved_tasks = []
 
     for t in tasks:
         task_data = TaskCreate(
-            title=t.get("title"),
-            description=t.get("description"),
+            title=t.title,
+            description=None,
             owner_id="613e3e37-816d-48ab-9c11-7db7833a1c09",
-            status=t.get("status", "TODO"),
-            priority=t.get("priority", "MEDIUM"),
-            estimated_minutes=t.get("estimated_minutes", 30),
+            status="TODO",
+            priority=t.priority,
+            estimated_minutes=t.estimated_minutes,
         )
 
         task = create_task(db=db, task=task_data)
