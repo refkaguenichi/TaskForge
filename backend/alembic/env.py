@@ -7,7 +7,7 @@ from app.core.config import settings
 from app.db.base import Base
 
 # 👇 IMPORT YOUR MODELS HERE (VERY IMPORTANT)
-from app.models import user, task
+from app.models import user, task, user_memory  # noqa: F401
 
 config = context.config
 

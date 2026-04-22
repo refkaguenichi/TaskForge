@@ -22,3 +22,4 @@ class User(Base):
 
     # relationships
     tasks = relationship("Task", back_populates="owner", cascade="all, delete-orphan")
+    memories = relationship("UserMemory", back_populates="user", cascade="all, delete-orphan")

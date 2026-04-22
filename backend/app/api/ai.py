@@ -5,9 +5,10 @@ import shutil
 
 from app.db.session import get_db
 from app.schemas.task import TaskGenerationRequest, TaskCreate
-from app.services.ai_service import generate_tasks_from_goal, generate_tasks_from_file
+from app.services.ai_service import generate_tasks_from_goal, generate_tasks_from_file, generate_tasks_with_memory
 from app.services.task_service import create_task
 from app.utils.file_reader import read_file
+from app.services.memory_service import get_memory, save_memory
 
 UPLOAD_DIR = "uploads"
 
@@ -72,5 +73,17 @@ async def upload_file_generate_tasks(
     file_text = read_file(file_path)
 
     tasks = generate_tasks_from_file(file_text)
+
+    return save_tasks(db, tasks)
+
+
+@router.post("/generate-with-memory")
+def generate(req: TaskGenerationRequest, db: Session = Depends(get_db)):
+
+    # 1. load memory
+    memory = get_memory(db, OWNER_ID)
+
+    # 2. generate tasks
+    tasks = generate_tasks_with_memory(req.goal, memory)
 
     return save_tasks(db, tasks)

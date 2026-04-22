@@ -3,6 +3,7 @@ from langchain_core.prompts import PromptTemplate
 from app.schemas.ai import AITaskList
 from app.core.config import settings
 from app.prompts.task_prompt import task_prompt
+from app.prompts.prompt_builder import build_prompt
 
 llm = ChatGroq(
     model=settings.GROQ_MODEL,
@@ -37,3 +38,11 @@ def generate_tasks_from_file(file_text: str, retries=2):
             continue
 
     raise Exception("AI failed to generate tasks from file")
+
+
+def generate_tasks_with_memory(goal: str, memory: str, context: str = ""):
+    prompt = build_prompt(goal, memory, context)
+
+    result = llm.invoke(prompt)
+
+    return result
