@@ -5,6 +5,8 @@ from app.db.session import get_db
 from app.schemas.user import UserOut
 from fastapi import HTTPException
 from app.services.user_service import UserService
+from app.models.user import User
+from app.core.deps import get_current_user
 
 user_service = UserService()
 
@@ -25,3 +27,8 @@ def get_user(uid: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
 
     return user
+
+
+@router.get("/me")
+def me(current_user: User = Depends(get_current_user)):
+    return current_user
