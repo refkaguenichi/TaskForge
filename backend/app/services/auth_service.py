@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from app.models.user import User
 from app.core.security import hash_password, verify_password
 from app.core.jwt import create_access_token
-from app.services.memory_service import save_memory
 import json
 from app.core.redis import redis_client
 from app.core.config import settings
@@ -22,10 +21,6 @@ def register(db: Session, user):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-
-    # 🧠 INIT LONG-TERM MEMORY (MySQL)
-    save_memory(db, db_user.id, "task_style", "balanced")
-    save_memory(db, db_user.id, "experience", "beginner")
 
     # 🔑 create token مباشرة
     token = create_access_token({"user_id": db_user.id})

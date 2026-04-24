@@ -7,7 +7,7 @@ from app.core.config import settings
 from app.db.base import Base
 
 # 👇 IMPORT YOUR MODELS HERE (VERY IMPORTANT)
-from app.models import user, task, user_memory  # noqa: F401
+from app.models import user, task, calendar_event, conversation, message, roadmap, user_preferences  # noqa: F401
 
 config = context.config
 

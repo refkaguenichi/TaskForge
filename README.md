@@ -29,7 +29,6 @@ TaskForge/
 - Task creation and task listing endpoints
 - AI-generated tasks from a goal prompt
 - AI-generated tasks from uploaded files
-- Memory-aware task generation flow
 - Dockerized local development with MySQL, Redis, RabbitMQ, phpMyAdmin, and Redis Commander
 
 ## Backend API
@@ -52,7 +51,6 @@ Main routes:
 - `GET /api/tasks/`
 - `POST /api/ai/generate-tasks`
 - `POST /api/ai/upload-file-generate-tasks`
-- `POST /api/ai/generate-with-memory`
 
 ## Environment Variables
 

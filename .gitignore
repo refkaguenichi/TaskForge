@@ -22,6 +22,8 @@ backend/*.egg-info/
 backend/.eggs/
 backend/uploads/
 backend/*.db
+backend/*.sqlite3
+backend/alembic/versions/
 
 # Frontend
 frontend/.git/
