@@ -15,13 +15,14 @@ class AuthService:
     def __init__(self):
         pass
 
-    def register(db: Session, user):
+    def register(self, db: Session, user):
         existing_user = db.query(User).filter(User.email == user.email).first()
         if existing_user:
             raise HTTPException(status_code=400, detail="Email already exists")
         db_user = User(
             email=user.email,
             password=hash_password(user.password),
+            name=user.name or user.email.split("@")[0],
         )
         db.add(db_user)
         db.commit()
@@ -35,7 +36,7 @@ class AuthService:
             "user_id": db_user.id
         }
     
-    def login(db: Session, redis, credentials):
+    def login(self, db: Session, redis, credentials):
 
         db_user = db.query(User).filter(User.email == credentials.email).first()
 
@@ -55,7 +56,7 @@ class AuthService:
             "user_id": db_user.id
         }
 
-    def logout(request: Request, response: Response):
+    def logout(self, request: Request, response: Response):
         token = request.cookies.get(settings.TOKEN_NAME)
 
         if token:

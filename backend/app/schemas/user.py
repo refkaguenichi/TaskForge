@@ -1,8 +1,10 @@
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, field_validator
+from typing import Optional
 
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
+    name: Optional[str] = None
 
     @field_validator("password")
     @classmethod
