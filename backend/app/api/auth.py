@@ -3,16 +3,17 @@ from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.schemas.user import UserCreate
-from app.services.auth_service import register, login,logout
-
 from app.core.redis import redis_client
 from app.core.config import settings
+from app.services.auth_service import AuthService
+
+auth_service = AuthService()
 
 router = APIRouter()
 
 @router.post("/register")
 def register_user(user: UserCreate, response: Response, db: Session = Depends(get_db)):
-    result = register(db, user)
+    result = auth_service.register(db, user)
     response.set_cookie(
         key=settings.TOKEN_NAME,
         value=result[settings.TOKEN_NAME],
@@ -26,7 +27,7 @@ def register_user(user: UserCreate, response: Response, db: Session = Depends(ge
 
 @router.post("/login")
 def login_user(user: UserCreate, response: Response, db: Session = Depends(get_db)):
-    result = login(db, redis_client, user)
+    result = auth_service.login(db, redis_client, user)
     response.set_cookie(
         key=settings.TOKEN_NAME,
         value=result[settings.TOKEN_NAME],

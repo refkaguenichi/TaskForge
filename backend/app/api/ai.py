@@ -5,9 +5,14 @@ import shutil
 
 from app.db.session import get_db
 from app.schemas.task import TaskGenerationRequest, TaskCreate
-from app.services.ai_service import generate_tasks_from_goal, generate_tasks_from_file
-from app.services.task_service import create_task
 from app.utils.file_reader import read_file
+
+from app.services.ai_service import AiService
+from app.services.task_service import TaskService
+
+ai_service = AiService()
+task_service = TaskService()
+
 
 UPLOAD_DIR = "uploads"
 
@@ -18,23 +23,21 @@ router = APIRouter()
 # 🔥 COMMON HELPERS (NO REPETITION)
 # -----------------------------
 
-OWNER_ID = "613e3e37-816d-48ab-9c11-7db7833a1c09"
 
-
-def build_task(t):
+def build_task(t, owner_id:str):
     return TaskCreate(
         title=t.title,
         description=getattr(t, "description", None),
-        owner_id=OWNER_ID,
+        owner_id=owner_id,
         status=getattr(t, "status", "TODO"),
         priority=t.priority,
         estimated_minutes=t.estimated_minutes,
     )
 
 
-def save_tasks(db: Session, tasks):
+def save_tasks(db: Session, tasks, owner_id:str):
     return [
-        create_task(db=db, task=build_task(t))
+        task_service.create_task(db=db, task=build_task(t, owner_id))
         for t in tasks
     ]
 
@@ -55,8 +58,8 @@ def save_uploaded_file(file: UploadFile):
 # -----------------------------
 @router.post("/generate-tasks")
 def generate_tasks(req: TaskGenerationRequest, db: Session = Depends(get_db)):
-    tasks = generate_tasks_from_goal(req.goal)
-    return save_tasks(db, tasks)
+    tasks = ai_service.generate_tasks_from_goal(req.goal)
+    return save_tasks(db, tasks, req.owner_id)
 
 
 # -----------------------------
@@ -71,7 +74,7 @@ async def upload_file_generate_tasks(
 
     file_text = read_file(file_path)
 
-    tasks = generate_tasks_from_file(file_text)
+    tasks = ai_service.generate_tasks_from_file(file_text)
 
     return save_tasks(db, tasks)
 

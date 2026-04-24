@@ -10,52 +10,56 @@ from fastapi import Request, Response
 from app.core.jwt import decode_token
 
 
-def register(db: Session, user):
-    existing_user = db.query(User).filter(User.email == user.email).first()
-    if existing_user:
-        raise HTTPException(status_code=400, detail="Email already exists")
-    db_user = User(
-        email=user.email,
-        password=hash_password(user.password),
-    )
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
+class AuthService:
 
-    # 🔑 create token مباشرة
-    token = create_access_token({"user_id": db_user.id})
+    def __init__(self):
+        pass
 
-    return {
-        "access_token": token,
-        "user_id": db_user.id
-    }
-def login(db: Session, redis, credentials):
+    def register(db: Session, user):
+        existing_user = db.query(User).filter(User.email == user.email).first()
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Email already exists")
+        db_user = User(
+            email=user.email,
+            password=hash_password(user.password),
+        )
+        db.add(db_user)
+        db.commit()
+        db.refresh(db_user)
 
-    db_user = db.query(User).filter(User.email == credentials.email).first()
+        # 🔑 create token مباشرة
+        token = create_access_token({"user_id": db_user.id})
 
-    if not db_user or not verify_password(credentials.password, db_user.password):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        return {
+            "access_token": token,
+            "user_id": db_user.id
+        }
+    
+    def login(db: Session, redis, credentials):
 
-    token = create_access_token({"user_id": db_user.id})
+        db_user = db.query(User).filter(User.email == credentials.email).first()
 
-    redis.set(
-        f"session:{db_user.id}",
-        json.dumps([]),
-        ex=3600
-    )
+        if not db_user or not verify_password(credentials.password, db_user.password):
+            raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    return {
-        "access_token": token,
-        "user_id": db_user.id
-    }
+        token = create_access_token({"user_id": db_user.id})
 
+        redis.set(
+            f"session:{db_user.id}",
+            json.dumps([]),
+            ex=3600
+        )
 
+        return {
+            "access_token": token,
+            "user_id": db_user.id
+        }
 
-def logout(request: Request, response: Response):
-    token = request.cookies.get(settings.TOKEN_NAME)
+    def logout(request: Request, response: Response):
+        token = request.cookies.get(settings.TOKEN_NAME)
 
-    if token:
-        payload = decode_token(token)
-        user_id = payload.get("sub")
+        if token:
+            payload = decode_token(token)
+            user_id = payload.get("sub")
 
-        redis_client.delete(f"session:{user_id}")
+            redis_client.delete(f"session:{user_id}")

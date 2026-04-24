@@ -16,25 +16,29 @@ prompt = task_prompt
 
 chain = prompt | structured_llm
 
-def generate_tasks_from_goal(goal: str, retries=2):
-    for _ in range(retries):
-        try:
-            result = chain.invoke({"goal": goal})
-            if result.tasks:
-                return result.tasks
-        except Exception:
-            continue
+class AiService:
+    def __init__(self):
+        self.chain = chain
 
-    raise Exception("AI failed to generate valid tasks")
+    def generate_tasks_from_goal(goal: str, retries=2):
+        for _ in range(retries):
+            try:
+                result = chain.invoke({"goal": goal})
+                if result.tasks:
+                    return result.tasks
+            except Exception:
+                continue
+
+        raise Exception("AI failed to generate valid tasks")
 
 
-def generate_tasks_from_file(file_text: str, retries=2):
-    for _ in range(retries):
-        try:
-            result = chain.invoke({"goal": file_text})
-            if result and result.tasks:
-                return result.tasks
-        except Exception:
-            continue
+    def generate_tasks_from_file(file_text: str, retries=2):
+        for _ in range(retries):
+            try:
+                result = chain.invoke({"goal": file_text})
+                if result and result.tasks:
+                    return result.tasks
+            except Exception:
+                continue
 
-    raise Exception("AI failed to generate tasks from file")
+        raise Exception("AI failed to generate tasks from file")

@@ -4,6 +4,9 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.task import Task
 from app.schemas.task import TaskCreate, TaskOut
+from app.services.task_service import TaskService
+
+task_service = TaskService()
 
 router = APIRouter()
 
@@ -14,12 +17,9 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db)):
         description=task.description,
         owner_id=task.owner_id
     )
-    db.add(new_task)
-    db.commit()
-    db.refresh(new_task)
-    return new_task
+    return task_service.create_task(db, new_task)
 
 
 @router.get("/", response_model=list[TaskOut])
 def list_tasks(db: Session = Depends(get_db)):
-    return db.query(Task).all()
+    return task_service.list_tasks(db)
