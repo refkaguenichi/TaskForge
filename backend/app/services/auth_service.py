@@ -29,7 +29,7 @@ class AuthService:
         db.refresh(db_user)
 
         # 🔑 create token مباشرة
-        token = create_access_token({"user_id": db_user.id})
+        token = create_access_token(db_user.id)
 
         return {
             "access_token": token,
@@ -43,7 +43,7 @@ class AuthService:
         if not db_user or not verify_password(credentials.password, db_user.password):
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
-        token = create_access_token({"user_id": db_user.id})
+        token = create_access_token(db_user.id)
 
         redis.set(
             f"session:{db_user.id}",

@@ -27,6 +27,6 @@ def get_user(uid: str, db: Session = Depends(get_db)):
     return user
 
 
-@router.get("/me", response_model=UserOut)
+@router.get("/current/me", response_model=UserOut)
 def me(current_user: User = Depends(get_current_user)):
     return current_user
