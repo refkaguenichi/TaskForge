@@ -14,17 +14,17 @@ services:
       DB_NAME: ${DB_NAME:-taskforge}
       DB_USER: ${DB_USER:-taskforge}
       DB_PASSWORD: ${DB_PASSWORD:-taskforge_pass}
-      REDIS_HOST: redis
+      REDIS_HOST: redis-taskforge
       REDIS_PORT: 6379
       REDIS_DB: ${REDIS_DB:-0}
-      REDIS_URL: redis://redis:6379/${REDIS_DB:-0}
+      REDIS_URL: redis://redis-taskforge:6379/${REDIS_DB:-0}
     ports:
       - "8000:8000"
     volumes:
       - ./backend:/app
     depends_on:
       - mysql
-      - redis
+      - redis-taskforge
       - rabbitmq
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
@@ -55,7 +55,7 @@ services:
     depends_on:
       - mysql
 
-  redis:
+  redis-taskforge:
     image: redis:7-alpine
     container_name: taskforge-redis
     restart: unless-stopped
@@ -64,16 +64,16 @@ services:
     volumes:
       - redis_data:/data
 
-  redis-commander:
+  redis-commander-taskforge:
     image: rediscommander/redis-commander:latest
     container_name: taskforge-redis-commander
     restart: unless-stopped
     environment:
-      REDIS_HOSTS: local:redis:6379
+      REDIS_HOSTS: local:redis-taskforge:6379
     ports:
       - "8081:8081"
     depends_on:
-      - redis
+      - redis-taskforge
 
   rabbitmq:
     image: rabbitmq:3-management
