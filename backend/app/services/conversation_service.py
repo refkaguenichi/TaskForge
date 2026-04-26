@@ -6,8 +6,8 @@ class ConversationService:
     def __init__(self):
         pass
 
-    def create_conversation(self, db, user_id):
-        conv = Conversation(user_id=user_id)
+    def create_conversation(self, db, user_id, title):
+        conv = Conversation(user_id=user_id, title=title)
         db.add(conv)
         db.commit()
         db.refresh(conv)

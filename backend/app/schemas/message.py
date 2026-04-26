@@ -1,5 +1,7 @@
 
 from pydantic import BaseModel
+from typing import Optional
 
 class MessageCreate(BaseModel):
-    content: str  
+    content: str 
+    conversation_id: Optional[int] = None 

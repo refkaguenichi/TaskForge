@@ -1,22 +1,29 @@
+# app/api/conversation.py
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.services.conversation_service import ConversationService
 from app.core.deps import get_current_user
-from app.models.user import User
-
-conversation_service = ConversationService()
+from app.services.orchestrator_service import ConversationOrchestrator
+from app.schemas.message import MessageCreate
 
 router = APIRouter()
+orchestrator = ConversationOrchestrator()
 
 
-@router.post("/")
-def create_conversation(
+@router.post("/send")
+def send_message(
+    payload: MessageCreate,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user = Depends(get_current_user)
 ):
-    return conversation_service.create_conversation(
-        db,
-        current_user.id
+    message = payload.content
+    conversation_id = payload.conversation_id
+
+    return orchestrator.handle(
+        db=db,
+        user=current_user,
+        message=message,
+        conversation_id=conversation_id
     )
