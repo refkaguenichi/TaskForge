@@ -55,6 +55,35 @@ services:
     depends_on:
       - mysql
 
+  mongo-taskforge:
+    image: mongo:7
+    container_name: taskforge-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-adminpass}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME:-taskforge}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: taskforge-mongo-express
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo-taskforge
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USERNAME:-admin}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD:-adminpass}
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_USERNAME:-admin}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD:-adminpass}
+    ports:
+      - "8082:8081"
+    depends_on:
+      - mongo-taskforge
+
   redis-taskforge:
     image: redis:7-alpine
     container_name: taskforge-redis
@@ -90,5 +119,6 @@ services:
 
 volumes:
   mysql_data:
+  mongodb_data:
   redis_data:
   rabbitmq_data:
