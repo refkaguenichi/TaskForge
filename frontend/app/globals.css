@@ -1,26 +1,118 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5efe4;
+  --foreground: #182127;
+  --muted: #66717b;
+  --surface: rgba(255, 250, 242, 0.86);
+  --surface-strong: rgba(255, 248, 237, 0.96);
+  --surface-dark: #182127;
+  --line: rgba(24, 33, 39, 0.12);
+  --accent: #ea5b2a;
+  --accent-strong: #bb3f16;
+  --accent-soft: rgba(234, 91, 42, 0.14);
+  --success: #0f8b61;
+  --shadow: 0 24px 80px rgba(36, 23, 16, 0.12);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-space-grotesk);
+  --font-mono: var(--font-plex-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background:
+    radial-gradient(circle at top left, rgba(234, 91, 42, 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(15, 139, 97, 0.14), transparent 24%),
+    linear-gradient(180deg, #fbf5ea 0%, #f3ebdf 45%, #efe6d8 100%);
 }
 
 body {
-  background: var(--background);
+  min-height: 100vh;
+  background: transparent;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-space-grotesk), sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(234, 91, 42, 0.22);
+}
+
+.glass-panel {
+  background: var(--surface);
+  backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+}
+
+.soft-border {
+  border: 1px solid var(--line);
+}
+
+.soft-border-r {
+  border-right: 1px solid var(--line);
+}
+
+.grid-lines {
+  background-image:
+    linear-gradient(rgba(24, 33, 39, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(24, 33, 39, 0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.fade-up {
+  animation: fade-up 420ms ease both;
+}
+
+.card-pop {
+  animation: card-pop 340ms ease both;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes card-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.98) translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }

@@ -24,3 +24,7 @@ class TaskOut(BaseModel):
 class TaskGenerationRequest(BaseModel):
     goal: str
     owner_id: str
+
+
+class TaskUpdate(BaseModel):
+    status: str | None = None

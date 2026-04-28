@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from app.models.task import Task
 from app.schemas.task import TaskCreate
 import uuid
+from app.core.enums import TaskStatus
 
 class TaskService:
     
@@ -53,3 +54,17 @@ class TaskService:
 
     def get_tasks_by_user(db: Session, owner_id: str):
         return db.query(Task).filter(Task.owner_id == owner_id).all()
+
+    def get_task(self, db: Session, task_id: str):
+        return db.query(Task).filter(Task.id == task_id).first()
+
+    def update_task_status(self, db: Session, task: Task, status: str):
+        task.status = TaskStatus(status)
+        db.add(task)
+        db.commit()
+        db.refresh(task)
+        return task
+
+    def delete_task(self, db: Session, task: Task):
+        db.delete(task)
+        db.commit()

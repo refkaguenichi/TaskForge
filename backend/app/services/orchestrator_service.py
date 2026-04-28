@@ -62,20 +62,21 @@ class ConversationOrchestrator:
         ai_result["tasks"] = ai_result.get("tasks", [])
         ai_result["roadmap"] = ai_result.get("roadmap", [])
 
-        # 5. assistant message
-        assistant_msg = self.message_service.create_message(
-            db=db,
-            conversation_id=conversation.id,
-            role=MessageRole.ASSISTANT,
-            content=ai_result["assistant_message"]
-        )
-
-        # 6. roadmap
+        # 5. roadmap
         roadmap = self.roadmap_service.create_roadmap(
             db=db,
             title=f"Roadmap for {message}",
             goal=message,
             user_id=user.id
+        )
+
+        # 6. assistant message
+        assistant_msg = self.message_service.create_message(
+            db=db,
+            conversation_id=conversation.id,
+            role=MessageRole.ASSISTANT,
+            content=ai_result["assistant_message"],
+            roadmap_id=roadmap.id
         )
 
         # 7. tasks (keep your bulk logic)
